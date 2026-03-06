@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Github Issue Tracker</title>
+
+    <!-- Tailwind CSS + DaisyUI -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  </head>
+  <body class="bg-[#F8FAFC]">
+    <section class="flex items-center justify-center min-h-dvh">
+      <div class="shadow-md rounded-lg p-8 bg-white max-w-lg w-full space-y-5">
+        <!-- Logo and Title -->
+        <div>
+          <div>
+            <img
+              src="./assets/github-logo.png"
+              alt="Github Logo"
+              class="w-16 h-16 mx-auto"
+            />
+          </div>
+          <div class="text-center mt-4">
+            <h1 class="text-3xl font-bold text-gray-800">
+              Github Issue Tracker
+            </h1>
+            <p class="text-gray-600 mt-2">Sign in to manage your issues</p>
+          </div>
+        </div>
+        <!-- Sign In Form -->
+        <div>
+          <form>
+            <div class="form-control w-full mt-6">
+              <label class="label">
+                <span class="label-text font-bold">Username</span>
+              </label>
+              <input
+                type="text"
+                placeholder="Enter your username"
+                class="input input-bordered w-full mt-2"
+              />
+              <p class="text-sm text-primary mt-1">
+                Default username: <strong>admin</strong>
+              </p>
+            </div>
+            <div class="form-control w-full mt-4">
+              <label class="label">
+                <span class="label-text font-bold">Password</span>
+              </label>
+              <input
+                type="password"
+                placeholder="Enter your password"
+                class="input input-bordered w-full mt-2"
+              />
+              <p class="text-sm text-primary mt-1">
+                Default password: <strong>admin123</strong>
+              </p>
+            </div>
+            <div class="form-control w-full mt-6">
+              <button class="btn btn-primary w-full">Sign In</button>
+            </div>
+          </form>
+        </div>
+        <!-- OR Divider -->
+        <div class="flex items-center gap-3 text-gray-300">
+          <hr class="flex-1" />
+          <span class="text-neutral-700">OR</span>
+          <hr class="flex-1" />
+        </div>
+        <!-- Demo Credentials -->
+        <div>
+          <p class="text-gray-400 text-center">Demo Credentials:</p>
+
+          <div class="bg-gray-100 p-4 rounded-lg text-center">
+            <p>Username: admin</p>
+            <p>Password: admin123</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
