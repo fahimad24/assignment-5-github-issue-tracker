@@ -41,6 +41,7 @@
               </label>
               <input
                 type="text"
+                id="username"
                 placeholder="Enter your username"
                 class="input input-bordered w-full mt-2"
               />
@@ -54,6 +55,7 @@
               </label>
               <input
                 type="password"
+                id="password"
                 placeholder="Enter your password"
                 class="input input-bordered w-full mt-2"
               />
@@ -62,7 +64,12 @@
               </p>
             </div>
             <div class="form-control w-full mt-6">
-              <button class="btn btn-primary w-full">Sign In</button>
+              <button
+                onclick="handleLogin(event)"
+                class="btn btn-primary w-full"
+              >
+                Sign In
+              </button>
             </div>
           </form>
         </div>
@@ -83,5 +90,9 @@
         </div>
       </div>
     </section>
+
+    <!-- Login Script -->
+    <script src="./scripts/utils/elementsget.js"></script>
+    <script src="./scripts/login.js"></script>
   </body>
 </html>

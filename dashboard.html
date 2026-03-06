@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Github Issue Tracker - Dashboard</title>
+
+    <!-- Tailwind CSS + DaisyUI -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@5"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body>
+    <header>
+      <nav class="shadow-md">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+          <div class="flex items-center gap-3 p-4">
+            <div>
+              <img
+                src="./assets/github-logo.png"
+                alt="Github Logo"
+                class="w-10 h-10 mx-auto"
+              />
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold text-gray-700">
+                Github Issue Tracker
+              </h1>
+            </div>
+          </div>
+          <div class="flex input-bordered items-center gap-4 p-4">
+            <div class="flex flex-1 input items-center gap-2">
+              <i class="fa-solid text-gray-500 fa-magnifying-glass"></i>
+              <input
+                type="text"
+                placeholder="Search issues..."
+                class="w-full max-w-xs"
+              />
+            </div>
+
+            <div>
+              <button class="btn btn-primary flex-1 ml-2">
+                <i class="fa-solid fa-plus ml-2"></i> New Issue
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+  </body>
+</html>
