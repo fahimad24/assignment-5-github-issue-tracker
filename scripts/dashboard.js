@@ -1,28 +1,43 @@
+const issueCardsContainer = getEleById('issue-cards-container');
+const filterBtnsContainer = getEleById('filter-btns-container');
+let allIssues = [];
 
-const dataLoader = async (state) => {
+const dataLoader = async () => {
     const res = await fetch('https://phi-lab-server.vercel.app/api/v1/lab/issues');
     const data = await res.json();
-    issueCardsLoader(state, data.data);
+    allIssues = data.data;
+    issueCardsLoader('all', allIssues);
+}
+
+async function searchIssue() {
+    const searchInput = getEleById('search-input');
+    const searchText = searchInput.value.trim().toLowerCase();
+
+    const res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${searchText}`);
+    const data = await res.json();
+    const filteredIssues = data.data;
+    allIssues = filteredIssues;
+
+    issueCardsLoader('all', filteredIssues);
 }
 
 dataLoader();
+
+
+filterBtnsContainer.addEventListener('click', (e) => {
+    const clickedBtn = e.target.closest('button');
+    if (!clickedBtn) return;
+
+    const state = clickedBtn.innerText.trim().toLowerCase();
+    issueCardsLoader(state, allIssues);
+
+});
 
 
 
 function issueCardsLoader(state = 'all', data) {
 
     const issuesLength = getEleById('issuses-langth');
-    const issueCardsContainer = getEleById('issue-cards-container');
-    const filterBtnsContainer = getEleById('filter-btns-container');
-
-    filterBtnsContainer.querySelectorAll('button').forEach(btn => {
-        if (btn.innerText.toLowerCase() === state) {
-            btn.classList.add('btn-primary', 'btn-active');
-        } else {
-            btn.classList.remove('btn-active', 'btn-primary');
-        }
-    });
-
 
     issueCardsContainer.innerHTML = '';
 
@@ -34,9 +49,16 @@ function issueCardsLoader(state = 'all', data) {
     issuesLength.innerText = data.length;
 
     data.forEach(issue => {
-        const { assignee, author, createdAt, description, id, labels, priority, status, title, updatedAt } = issue;
+        issueCardsRender(issue);
+    });
 
-        issueCardsContainer.innerHTML += `
+    // console.log(state, data);
+}
+
+function issueCardsRender(issue) {
+    const { assignee, author, createdAt, description, id, labels, priority, status, title, updatedAt } = issue;
+
+    issueCardsContainer.innerHTML += `
         <div
               class="border-t-4 rounded-md ${status === 'open' ? 'border-emerald-600' : 'border-purple-600'} bg-white shadow-sm"
             >
@@ -57,7 +79,7 @@ function issueCardsLoader(state = 'all', data) {
                   </div>
                 </div>
                 <div class="mt-2 space-y-2">
-                  <h2 class="text-sm">${title}</h2>
+                  <h2 class="text-sm font-bold">${title}</h2>
                   <p class="text-gray-500 text-xs mt-1">
                     ${description}
                   </p>
@@ -83,7 +105,5 @@ function issueCardsLoader(state = 'all', data) {
               </div>
             </div>
         `
-    });
 
-    // console.log(state, data);
 }

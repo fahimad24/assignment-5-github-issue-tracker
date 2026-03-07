@@ -53,6 +53,7 @@
             <div class="flex flex-1 input items-center gap-2">
               <i class="fa-solid text-gray-500 fa-magnifying-glass"></i>
               <input
+                id="search-input"
                 type="text"
                 placeholder="Search issues..."
                 class="w-full max-w-xs"
@@ -60,7 +61,10 @@
             </div>
 
             <div>
-              <button class="btn btn-primary flex-1 ml-2">
+              <button
+                onclick="searchIssue()"
+                class="btn btn-primary flex-1 ml-2"
+              >
                 <i class="fa-solid fa-plus ml-2"></i> New Issue
               </button>
             </div>
@@ -75,15 +79,9 @@
           id="filter-btns-container"
           class="flex items-center gap-4 p-5 max-w-6xl mx-auto bg-white rounded-lg shadow-sm"
         >
-          <button onclick="dataLoader('all')" class="btn btn-outline">
-            All
-          </button>
-          <button onclick="dataLoader('open')" class="btn btn-outline">
-            Open
-          </button>
-          <button onclick="dataLoader('closed')" class="btn btn-outline">
-            Closed
-          </button>
+          <button class="btn btn-outline">All</button>
+          <button class="btn btn-outline">Open</button>
+          <button class="btn btn-outline">Closed</button>
         </div>
       </section>
 
