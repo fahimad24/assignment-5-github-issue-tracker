@@ -19,9 +19,24 @@ async function searchIssue() {
     allIssues = filteredIssues;
 
     issueCardsLoader('all', filteredIssues);
+    searchInput.value = '';
 }
 
 dataLoader();
+
+issueCardsContainer.addEventListener('click', async (e) => {
+    e.stopPropagation();
+    const issueCard = e.target.closest('.issue-card');
+    if (!issueCard) return;
+    const issueId = issueCard.getAttribute('set-data-id');
+
+    const res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${issueId}`);
+    const data = await res.json();
+    const issueDetails = data.data;
+
+    openModal(issueDetails);
+
+});
 
 
 filterBtnsContainer.addEventListener('click', (e) => {
@@ -58,6 +73,16 @@ function issueCardsLoader(state = 'all', data) {
 
     issuesLength.innerText = data.length;
 
+    if (data.length === 0) {
+        issueCardsContainer.innerHTML = `
+            <div class="text-center py-10 col-span-full">
+                <h2 class="text-2xl font-bold mb-4">No issues found</h2>
+                <p class="text-gray-500">Try adjusting your search or filter to find what you're looking for.</p>
+            </div>
+        `;
+        return;
+    }
+
     data.forEach(issue => {
         issueCardsRender(issue);
     });
@@ -69,8 +94,8 @@ function issueCardsRender(issue) {
     const { assignee, author, createdAt, description, id, labels, priority, status, title, updatedAt } = issue;
 
     issueCardsContainer.innerHTML += `
-        <div
-              class="border-t-4 rounded-md ${status === 'open' ? 'border-emerald-600' : 'border-purple-600'} bg-white shadow-sm"
+        <div set-data-id="${id}"
+              class="border-t-4 rounded-md ${status === 'open' ? 'border-emerald-600' : 'border-purple-600'} bg-white shadow-sm issue-card"
             >
               <div class="border-b-2 p-5 border-gray-300">
                 <div class="flex items-center justify-between">
@@ -117,3 +142,66 @@ function issueCardsRender(issue) {
         `
 
 }
+
+function openModal(issue) {
+    const modal = getEleById('my_modal');
+    const issueDetails = `
+    <div class="max-w-2xl w-full p-5 bg-white rounded-lg">
+          <div>
+            <div class="space-y-5">
+              <h2 class="text-2xl font-bold">${issue.title}</h2>
+              <div class="flex items-center gap-2 mt-2 text-gray-500 text-xs">
+                <span class="py-1 p-2 rounded-full bg-green-600 text-white"
+                  >Opened</span
+                >•<span>Opened by ${issue.author}</span>•<span>${new Date(issue.createdAt).toLocaleDateString()}</span>
+              </div>
+              <div class="flex items-center gap-3 my-4">
+                <button
+                  class="px-2 p-[1px] rounded-full text-xs border uppercase ${issue?.labels[0] === 'bug' ? 'text-red-500 border-red-500 bg-red-50' : issue?.labels[0] === 'enhancement' ? 'text-green-500 border-green-500 bg-green-50' : 'text-purple-500 border-purple-500 bg-purple-50'}"
+                >
+                  <i
+                    class="${issue?.labels[0] === 'bug' ? 'fa-chisel fa-regular fa-bug ' : issue?.labels[0] === 'enhancement' ? 'fa-sharp fa-solid fa-stars' : 'fa-light fa-file-lines'}"
+                  ></i>
+                  ${issue?.labels[0]}
+                </button>
+                <button
+                  class="px-2 py-[1px] rounded-full bg-yellow-50 text-xs text-amber-600 border border-yellow-500 uppercase"
+                >
+                  <i class="fa-sharp fa-light fa-circle-currency"></i>
+                  ${issue?.labels[1]}
+                </button>
+              </div>
+              <div class="my-5 text-neutral-500">
+                <p>${issue?.description}</p>
+              </div>
+              <div
+                class="flex items-center justify-between gap-5 p-2.5 bg-gray-50 rounded-lg"
+              >
+                <div class="flex-1 space-y-3">
+                  <h3 class="font-medium text-neutral-500">Assignee:</h3>
+                  <p>${issue?.assignee}</p>
+                </div>
+                <div class="flex-1 space-y-3">
+                  <h3 class="font-medium text-neutral-500">Priority:</h3>
+                  <span
+                    class="py-1 px-3 rounded-full text-xs text-white ${issue.priority === 'high' ? ' bg-red-500 ' : issue.priority === 'medium' ? ' bg-amber-500 ' : ' bg-gray-500'} uppercase"
+                    >${issue.priority}</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-action">
+            <form method="dialog">
+              <!-- if there is a button in form, it will close the modal -->
+              <button class="btn btn-primary">Close</button>
+            </form>
+          </div>
+        </div>
+    `
+    modal.innerHTML = issueDetails;
+    modal.showModal();
+}
+
+
+// https://phi-lab-server.vercel.app/api/v1/lab/issue/{id}
