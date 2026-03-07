@@ -26,7 +26,7 @@ dataLoader();
 
 filterBtnsContainer.addEventListener('click', (e) => {
     const clickedBtn = e.target.closest('button');
-    if (!clickedBtn) return;
+    if (!clickedBtn || !filterBtnsContainer.contains(clickedBtn)) return;
 
     const state = clickedBtn.innerText.trim().toLowerCase();
     issueCardsLoader(state, allIssues);
@@ -46,6 +46,16 @@ function issueCardsLoader(state = 'all', data) {
     } else if (state === 'closed') {
         data = data.filter(issue => issue.status === 'closed');
     }
+
+    const filterButtons = filterBtnsContainer.querySelectorAll('button');
+    filterButtons.forEach((button) => {
+        if (button.innerText.trim().toLowerCase() === state) {
+            button.classList.add('btn-active', 'btn-primary');
+        } else {
+            button.classList.remove('btn-active', 'btn-primary');
+        }
+    });
+
     issuesLength.innerText = data.length;
 
     data.forEach(issue => {
