@@ -17,9 +17,9 @@ function issueCardsLoader(state = 'all', data) {
 
     filterBtnsContainer.querySelectorAll('button').forEach(btn => {
         if (btn.innerText.toLowerCase() === state) {
-            btn.classList.add('btn-active');
+            btn.classList.add('btn-primary', 'btn-active');
         } else {
-            btn.classList.remove('btn-active');
+            btn.classList.remove('btn-active', 'btn-primary');
         }
     });
 
