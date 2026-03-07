@@ -7,6 +7,7 @@ const dataLoader = async () => {
     const data = await res.json();
     allIssues = data.data;
     issueCardsLoader('all', allIssues);
+    console.log(allIssues);
 }
 
 async function searchIssue() {
@@ -120,13 +121,13 @@ function issueCardsRender(issue) {
                   </p>
                   <div class="flex items-center gap-3">
                     <button
-                      class="px-2 p-[1px] rounded-full  text-xs border uppercase ${issue?.labels[0] === 'bug' ? 'text-red-500 border-red-500 bg-red-50' : issue?.labels[0] === 'enhancement' ? 'text-green-500 border-green-500 bg-green-50' : 'text-purple-500 border-purple-500 bg-purple-50'}"
+                      class="px-2 p-[2px] rounded-full  text-xs border uppercase ${issue?.labels[0] === 'bug' ? 'text-red-500 border-red-300 bg-red-50' : issue?.labels[0] === 'enhancement' ? 'text-green-500 border-green-300 bg-green-50' : 'text-purple-500 border-purple-300 bg-purple-50'}"
                     >
                       <i class="${issue?.labels[0] === 'bug' ? 'fa-chisel fa-regular fa-bug ' : issue?.labels[0] === 'enhancement' ? 'fa-sharp fa-solid fa-stars' : 'fa-light fa-file-lines'}"></i>
                       ${issue?.labels[0]}
                     </button>
                     <button
-                      class="px-2 py-[1px] rounded-full bg-yellow-50 text-xs text-amber-600 border border-yellow-500 uppercase"
+                      class="px-2 py-[2px] rounded-full ${issue.labels[1] ? '' : 'hidden'} bg-yellow-50 text-xs text-amber-600 border border-yellow-300 uppercase"
                     >
                       <i class="fa-sharp fa-light fa-circle-currency"></i>
                         ${issue?.labels[1]}
@@ -135,7 +136,7 @@ function issueCardsRender(issue) {
                 </div>
               </div>
               <div class="p-5 text-gray-400 space-y-3">
-                <p class="text-xs">#${id} by ${author}</p>
+                <p class="text-xs">#${id} by ${author.split('_').join(' ')}</p>
                 <p class="text-xs">${new Date(createdAt).toLocaleDateString()}</p>
               </div>
             </div>
@@ -151,13 +152,13 @@ function openModal(issue) {
             <div class="space-y-5">
               <h2 class="text-2xl font-bold">${issue.title}</h2>
               <div class="flex items-center gap-2 mt-2 text-gray-500 text-xs">
-                <span class="py-1 p-2 rounded-full bg-green-600 text-white"
-                  >Opened</span
-                >•<span>Opened by ${issue.author}</span>•<span>${new Date(issue.createdAt).toLocaleDateString()}</span>
+                <span class="py-1 p-2 rounded-full ${issue.status === 'open' ? 'bg-green-600' : 'bg-purple-600'} text-white"
+                  >${issue.status === 'open' ? 'Opened' : 'Closed'}</span
+                >•<span>Opened by ${issue.author.split('_').join(' ')}</span>•<span>${new Date(issue.createdAt).toLocaleDateString()}</span>
               </div>
               <div class="flex items-center gap-3 my-4">
                 <button
-                  class="px-2 p-[1px] rounded-full text-xs border uppercase ${issue?.labels[0] === 'bug' ? 'text-red-500 border-red-500 bg-red-50' : issue?.labels[0] === 'enhancement' ? 'text-green-500 border-green-500 bg-green-50' : 'text-purple-500 border-purple-500 bg-purple-50'}"
+                  class="px-2 p-[1px] rounded-full text-xs border uppercase ${issue?.labels[0] === 'bug' ? 'text-red-500 border-red-300 bg-red-50' : issue?.labels[0] === 'enhancement' ? 'text-green-500 border-green-300 bg-green-50' : 'text-purple-500 border-purple-300 bg-purple-50'}"
                 >
                   <i
                     class="${issue?.labels[0] === 'bug' ? 'fa-chisel fa-regular fa-bug ' : issue?.labels[0] === 'enhancement' ? 'fa-sharp fa-solid fa-stars' : 'fa-light fa-file-lines'}"
@@ -165,7 +166,7 @@ function openModal(issue) {
                   ${issue?.labels[0]}
                 </button>
                 <button
-                  class="px-2 py-[1px] rounded-full bg-yellow-50 text-xs text-amber-600 border border-yellow-500 uppercase"
+                  class="px-2 py-[1px] rounded-full ${issue.labels[1] ? '' : 'hidden'} bg-yellow-50 text-xs text-amber-600 border border-yellow-300 uppercase"
                 >
                   <i class="fa-sharp fa-light fa-circle-currency"></i>
                   ${issue?.labels[1]}
@@ -179,7 +180,7 @@ function openModal(issue) {
               >
                 <div class="flex-1 space-y-3">
                   <h3 class="font-medium text-neutral-500">Assignee:</h3>
-                  <p>${issue?.assignee}</p>
+                  <p>${issue?.assignee ? issue?.assignee.split('_').join(' ') : 'Unassigned'}</p>
                 </div>
                 <div class="flex-1 space-y-3">
                   <h3 class="font-medium text-neutral-500">Priority:</h3>
