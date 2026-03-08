@@ -1,51 +1,68 @@
 const issueCardsContainer = getEleById('issue-cards-container');
 const filterBtnsContainer = getEleById('filter-btns-container');
+const loadingSpinner = getEleById('loading-spinner');
 let allIssues = [];
 
+function showSpinner() {
+  loadingSpinner.classList.remove('hidden');
+  issueCardsContainer.classList.add('hidden');
+}
+
+function hideSpinner() {
+  loadingSpinner.classList.add('hidden');
+  issueCardsContainer.classList.remove('hidden');
+}
+
 const dataLoader = async () => {
-    const res = await fetch('https://phi-lab-server.vercel.app/api/v1/lab/issues');
-    const data = await res.json();
-    allIssues = data.data;
-    issueCardsLoader('all', allIssues);
-    console.log(allIssues);
+  showSpinner();
+  const res = await fetch('https://phi-lab-server.vercel.app/api/v1/lab/issues');
+  const data = await res.json();
+  allIssues = data.data;
+  issueCardsLoader('all', allIssues);
+  hideSpinner();
+  console.log(allIssues);
 }
 
 async function searchIssue() {
-    const searchInput = getEleById('search-input');
-    const searchText = searchInput.value.trim().toLowerCase();
+  const searchInput = getEleById('search-input');
+  const searchText = searchInput.value.trim().toLowerCase();
 
-    const res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${searchText}`);
-    const data = await res.json();
-    const filteredIssues = data.data;
-    allIssues = filteredIssues;
+  showSpinner();
+  const res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${searchText}`);
+  const data = await res.json();
+  const filteredIssues = data.data;
+  allIssues = filteredIssues;
 
-    issueCardsLoader('all', filteredIssues);
-    searchInput.value = '';
+  issueCardsLoader('all', filteredIssues);
+  hideSpinner();
+  searchInput.value = '';
 }
 
 dataLoader();
 
 issueCardsContainer.addEventListener('click', async (e) => {
-    e.stopPropagation();
-    const issueCard = e.target.closest('.issue-card');
-    if (!issueCard) return;
-    const issueId = issueCard.getAttribute('set-data-id');
+  e.stopPropagation();
+  const issueCard = e.target.closest('.issue-card');
+  if (!issueCard) return;
+  const issueId = issueCard.getAttribute('set-data-id');
 
-    const res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${issueId}`);
-    const data = await res.json();
-    const issueDetails = data.data;
+  const res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${issueId}`);
+  const data = await res.json();
+  const issueDetails = data.data;
 
-    openModal(issueDetails);
+  openModal(issueDetails);
+
 
 });
 
 
 filterBtnsContainer.addEventListener('click', (e) => {
-    const clickedBtn = e.target.closest('button');
-    if (!clickedBtn || !filterBtnsContainer.contains(clickedBtn)) return;
 
-    const state = clickedBtn.innerText.trim().toLowerCase();
-    issueCardsLoader(state, allIssues);
+  const clickedBtn = e.target.closest('button');
+  if (!clickedBtn || !filterBtnsContainer.contains(clickedBtn)) return;
+
+  const state = clickedBtn.innerText.trim().toLowerCase();
+  issueCardsLoader(state, allIssues);
 
 });
 
@@ -53,48 +70,49 @@ filterBtnsContainer.addEventListener('click', (e) => {
 
 function issueCardsLoader(state = 'all', data) {
 
-    const issuesLength = getEleById('issuses-langth');
+  const issuesLength = getEleById('issuses-langth');
 
-    issueCardsContainer.innerHTML = '';
+  issueCardsContainer.innerHTML = '';
 
-    if (state === 'open') {
-        data = data.filter(issue => issue.status === 'open');
-    } else if (state === 'closed') {
-        data = data.filter(issue => issue.status === 'closed');
+  if (state === 'open') {
+    data = data.filter(issue => issue.status === 'open');
+  } else if (state === 'closed') {
+    data = data.filter(issue => issue.status === 'closed');
+  }
+
+  const filterButtons = filterBtnsContainer.querySelectorAll('button');
+  filterButtons.forEach((button) => {
+    if (button.innerText.trim().toLowerCase() === state) {
+      button.classList.add('btn-active', 'btn-primary');
+    } else {
+      button.classList.remove('btn-active', 'btn-primary');
     }
+  });
 
-    const filterButtons = filterBtnsContainer.querySelectorAll('button');
-    filterButtons.forEach((button) => {
-        if (button.innerText.trim().toLowerCase() === state) {
-            button.classList.add('btn-active', 'btn-primary');
-        } else {
-            button.classList.remove('btn-active', 'btn-primary');
-        }
-    });
+  issuesLength.innerText = data.length;
 
-    issuesLength.innerText = data.length;
-
-    if (data.length === 0) {
-        issueCardsContainer.innerHTML = `
+  if (data.length === 0) {
+    issueCardsContainer.innerHTML = `
             <div class="text-center py-10 col-span-full">
                 <h2 class="text-2xl font-bold mb-4">No issues found</h2>
                 <p class="text-gray-500">Try adjusting your search or filter to find what you're looking for.</p>
             </div>
         `;
-        return;
-    }
+    return;
+  }
 
-    data.forEach(issue => {
-        issueCardsRender(issue);
-    });
+  data.forEach(issue => {
+    issueCardsRender(issue);
+  });
 
-    // console.log(state, data);
+  // console.log(state, data);
 }
 
 function issueCardsRender(issue) {
-    const { assignee, author, createdAt, description, id, labels, priority, status, title, updatedAt } = issue;
+  const { assignee, author, createdAt, description, id, labels, priority, status, title, updatedAt } = issue;
 
-    issueCardsContainer.innerHTML += `
+
+  issueCardsContainer.innerHTML += `
         <div set-data-id="${id}"
               class="border-t-4 rounded-md ${status === 'open' ? 'border-emerald-600' : 'border-purple-600'} bg-white shadow-sm issue-card"
             >
@@ -121,23 +139,23 @@ function issueCardsRender(issue) {
                   </p>
                   <div class="flex items-center gap-3">
                     <button
-                      class="px-2 p-[2px] rounded-full  text-xs border uppercase ${issue?.labels[0] === 'bug' ? 'text-red-500 border-red-300 bg-red-50' : issue?.labels[0] === 'enhancement' ? 'text-green-500 border-green-300 bg-green-50' : 'text-purple-500 border-purple-300 bg-purple-50'}"
+                      class="px-2 p-[2px] rounded-full  text-xs border uppercase ${labels[0] === 'bug' ? 'text-red-500 border-red-300 bg-red-50' : labels[0] === 'enhancement' ? 'text-green-500 border-green-300 bg-green-50' : 'text-purple-500 border-purple-300 bg-purple-50'}"
                     >
-                      <i class="${issue?.labels[0] === 'bug' ? 'fa-chisel fa-regular fa-bug ' : issue?.labels[0] === 'enhancement' ? 'fa-sharp fa-solid fa-stars' : 'fa-light fa-file-lines'}"></i>
-                      ${issue?.labels[0]}
+                      <i class="${labels[0] === 'bug' ? 'fa-chisel fa-regular fa-bug ' : labels[0] === 'enhancement' ? 'fa-sharp fa-solid fa-stars' : 'fa-light fa-file-lines'}"></i>
+                      ${labels[0]}
                     </button>
                     <button
-                      class="px-2 py-[2px] rounded-full ${issue.labels[1] ? '' : 'hidden'} bg-yellow-50 text-xs text-amber-600 border border-yellow-300 uppercase"
+                      class="px-2 py-[2px] rounded-full ${labels[1] ? '' : 'hidden'} bg-yellow-50 text-xs text-amber-600 border border-yellow-300 uppercase"
                     >
                       <i class="fa-sharp fa-light fa-circle-currency"></i>
-                        ${issue?.labels[1]}
+                        ${labels[1]}
                     </button>
                   </div>
                 </div>
               </div>
               <div class="p-5 text-gray-400 space-y-3">
                 <p class="text-xs">#${id} by ${author.split('_').join(' ')}</p>
-                <p class="text-xs">${new Date(createdAt).toLocaleDateString()}</p>
+                <p class="text-xs">${new Date(updatedAt).toLocaleDateString()}</p>
               </div>
             </div>
         `
@@ -145,8 +163,8 @@ function issueCardsRender(issue) {
 }
 
 function openModal(issue) {
-    const modal = getEleById('my_modal');
-    const issueDetails = `
+  const modal = getEleById('my_modal');
+  const issueDetails = `
     <div class="max-w-2xl w-full p-5 bg-white rounded-lg">
           <div>
             <div class="space-y-5">
@@ -154,7 +172,7 @@ function openModal(issue) {
               <div class="flex items-center gap-2 mt-2 text-gray-500 text-xs">
                 <span class="py-1 p-2 rounded-full ${issue.status === 'open' ? 'bg-green-600' : 'bg-purple-600'} text-white"
                   >${issue.status === 'open' ? 'Opened' : 'Closed'}</span
-                >•<span>Opened by ${issue.author.split('_').join(' ')}</span>•<span>${new Date(issue.createdAt).toLocaleDateString()}</span>
+                >•<span>Opened by ${issue.author.split('_').join(' ')}</span>•<span>${new Date(issue.updatedAt).toLocaleDateString()}</span>
               </div>
               <div class="flex items-center gap-3 my-4">
                 <button
@@ -200,9 +218,8 @@ function openModal(issue) {
           </div>
         </div>
     `
-    modal.innerHTML = issueDetails;
-    modal.showModal();
+  modal.innerHTML = issueDetails;
+  modal.showModal();
 }
 
 
-// https://phi-lab-server.vercel.app/api/v1/lab/issue/{id}
