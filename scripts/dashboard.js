@@ -20,7 +20,6 @@ const dataLoader = async () => {
   allIssues = data.data;
   issueCardsLoader('all', allIssues);
   hideSpinner();
-  console.log(allIssues);
 }
 
 async function searchIssue() {
