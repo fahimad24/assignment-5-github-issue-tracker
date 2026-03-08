@@ -27,6 +27,12 @@ async function searchIssue() {
   const searchInput = getEleById('search-input');
   const searchText = searchInput.value.trim().toLowerCase();
 
+  if (!searchText) {
+    console.log('Searching for:', searchText);
+    dataLoader();
+    return;
+  }
+
   showSpinner();
   const res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${searchText}`);
   const data = await res.json();

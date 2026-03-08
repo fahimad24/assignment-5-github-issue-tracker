@@ -8,6 +8,6 @@ function handleLogin(event) {
         alert('Login successful!');
         window.location.href = 'dashboard.html'; // Redirect to dashboard
     } else {
-        alert('Invalid credentials!');
+        alert('Invalid username or password!');
     }
 }
